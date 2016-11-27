@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css?family=Space+Mono');
+@import url('https://fonts.googleapis.com/css?family=Karla');
+
+body, html {
+ width: 100%;
+ box-sizing: border-box;
+ font-family: 'Karla', sans-serif;
+ margin-top: 20px;
+}
+
+h1 {
+  font-size: 28px;
+  margin-left: 10px;
+  font-weight: 800;
+
+}
+
+.entry {
+  display: flex;
+  flex-direction: column;
+  margin: 20px 10px;
+}
+
+.entrySet {
+    width: 600px;
+    border: 3px solid #AAAAAA;
+    font-family: 'Space Mono', monospace;
+    resize: none;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.entryTitle {
+
+}
+
+.entryBody {
+  height: 220px;
+
+
+
+}
+
+input:focus, textarea:focus {
+
+    outline: none;
+}
+
+input[type=submit] {
+  border: 0 none;
+  width: 150px;
+  height: 60px;
+  font-family: 'Karla', sans-serif;
+  text-transform: uppercase;
+  font-size: 18px;
+  cursor: pointer;
+  background: rgba(128,200,200,1);
+  transition: all .15s linear;
+}
+
+input[type=submit]:hover {
+    background: rgba(128,220,220,1);
+    font-size: 19px;
+}
