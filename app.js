@@ -8,6 +8,7 @@ const pygmentize=require('pygmentize-bundled')
 
 
 
+
 app.set('view engine', 'ejs');
 app.use(express.static("public"));
 var marked = require('marked')
@@ -54,7 +55,7 @@ app.get('/newBlogPost', function(req,res) {
 let content = {};
 app.post('/addEntry', function(req,res) {
   content = req.body;
-  //console.log(content);
+  console.log(content);
 
   res.redirect('showPost')
 })
@@ -63,10 +64,10 @@ app.get('/showPost', function(req, res) {
 
   const entryBody = content.entryBody;
   const entryTitle = content.entryTitle;
-  let markedEntryBody = '';
-  marked(markdownString, function (err, content) {
+
+  marked(entryBody, function (err, content) {
    if (err) throw err;
-   markedEntryBody = content;
+   const markedEntryBody = content;
    console.log(markedEntryBody);
    res.render('showPost', {markedEntryBody: markedEntryBody, entryTitle: entryTitle})
  });

@@ -1,10 +1,22 @@
 <head>
 <link rel="stylesheet" href="/native.css">
+<link rel="stylesheet" href="/post-styles.css">
 
 </head>
 
 <body>
-  post will show up here
-  title is <%= entryTitle %>
-  body is <%- markedEntryBody %>
+
+  <div class="container">
+    <div class="postTitle">
+      <h1><%= entryTitle %></h1>
+    </div>
+
+<hr >
+
+    <div class="postBody">
+       <%- markedEntryBody %>
+    </div>
+  </div>
+
+
 </body>
