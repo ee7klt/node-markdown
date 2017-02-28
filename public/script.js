@@ -1,3 +1,10 @@
+console.log('script.js loaded')
+
+const containerElem = document.getElementsByClassName('container')[0];
+console.log(containerElem)
+
+
+
 var fadeout = function(elem) {
     var o = 1;
     var timer = setInterval(function () {
@@ -21,3 +28,6 @@ var fadein = function(elem) {
         o += 0.1;
     }, 25);
 };
+
+
+//fadein(containerElem)

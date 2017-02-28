@@ -62,3 +62,19 @@ input[type=submit]:hover {
     background: rgba(128,220,220,1);
     font-size: 19px;
 }
+
+.container {
+  opacity: 0;
+}
+
+.zero {
+  margin: 0;
+  padding: 0;
+}
+
+i.icon {
+  background-color: blue;
+  color: blue;
+  line-height: 3em;
+  font-size: .5em;
+}
