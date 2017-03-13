@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const marked = require('marked')
 //const hljs = require('highlight.js')
 const pygmentize=require('pygmentize-bundled')
-
+const port = process.env.PORT || 3000
 
 
 
@@ -118,6 +118,6 @@ app.get('/showPost', function(req, res) {
 // end @chikathreesix
 })
 
-app.listen(3000, function() {
+app.listen(port, function() {
     console.log('server started!');
 })
