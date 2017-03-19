@@ -14,6 +14,27 @@ app.set('view engine', 'ejs');
 app.use(express.static("public"));
 
 
+const mongoose = require('mongoose');
+const uri = "mongodb://mongoadmin:quark8751@cluster0-shard-00-00-abnxv.mongodb.net:27017,cluster0-shard-00-01-abnxv.mongodb.net:27017,cluster0-shard-00-02-abnxv.mongodb.net:27017/markdownDB?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"
+mongoose.connect(uri);
+const markdownSchema = new mongoose.Schema({
+  title: String,
+  body: String,
+  created: {type: Date, default: Date.now} 
+})
+const markdownModel = mongoose.model('blog', markdownSchema)
+// markdownModel.create({
+//   title:"my first blog",
+//   body: "this is my first blog"
+// }, (err, res) => {
+//   if (err) {
+//     console.log('error inserting in to markdownDB')
+//   } else {
+//     console.log(res)
+//     console.log('success insertion')
+//   }
+// })
+
 
 
 /**
@@ -87,9 +108,30 @@ let content = {};
 
 // handle the post request for new blog post
 app.post('/addEntry', function(req,res) {
-  content = req.body;
-  console.log(content);
-  res.redirect('showPost')
+  //req.body.blog.body = req.sanitize(req.body.blog.body)
+    marked(req.body.blog.body, function (err, content) {
+   if (err) throw err;
+   req.body.blog.body = content;
+   markdownModel.create(
+    req.body.blog, (err, blog) => {
+      if (err) {
+        console.log('error inserting')
+      } else {
+       
+        console.log('here is what got inserted:')
+        console.log('-----------------------------')
+         console.log(blog)
+         console.log('-----------------------------')
+        res.redirect('showPost')
+       
+
+      }
+    }
+  )
+ });
+
+  
+ 
 })
 
 
@@ -97,18 +139,22 @@ app.post('/addEntry', function(req,res) {
 // rendered wihin marked callback
 app.get('/showPost', function(req, res) {
 
-  const entryBody = content.entryBody;
-  const entryTitle = content.entryTitle;
-  const entryDate = "Friday, Dec 2nd 2016"
+markdownModel.find({}, (err,blogs)=> {
+  if (err) {
+
+  } else {
+    res.render('showPost', {blogs: blogs})
+  }
+})
 
 // start node-pygmentize
 
-  marked(entryBody, function (err, content) {
-   if (err) throw err;
-   const markedEntryBody = content;
-   console.log(markedEntryBody);
-   res.render('showPost', {markedEntryBody: markedEntryBody, entryTitle: entryTitle, entryDate: entryDate})
- });
+//   marked(entryBody, function (err, content) {
+//    if (err) throw err;
+//    const markedEntryBody = content;
+//    console.log(markedEntryBody);
+//    res.render('showPost', {markedEntryBody: markedEntryBody, entryTitle: entryTitle, entryDate: entryDate})
+//  });
  // end node-pygmentize
 
 
