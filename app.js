@@ -3,6 +3,8 @@ const express=require('express')
 const app = express();
 const bodyParser = require('body-parser');
 const marked = require('marked')
+const methodOverride = require('method-override')
+
 //const hljs = require('highlight.js')
 const pygmentize=require('pygmentize-bundled')
 const port = process.env.PORT || 3000
@@ -12,17 +14,18 @@ const port = process.env.PORT || 3000
 app.use(bodyParser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
 app.use(express.static("public"));
+app.use(methodOverride("_method"))
 
 
 const mongoose = require('mongoose');
-const uri = "mongodb://mongoadmin:quark8751@cluster0-shard-00-00-abnxv.mongodb.net:27017,cluster0-shard-00-01-abnxv.mongodb.net:27017,cluster0-shard-00-02-abnxv.mongodb.net:27017/markdownDB?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"
-//const uri = "mongodb://localhost/markdownDB"
+//const uri = "mongodb://mongoadmin:quark8751@cluster0-shard-00-00-abnxv.mongodb.net:27017,cluster0-shard-00-01-abnxv.mongodb.net:27017,cluster0-shard-00-02-abnxv.mongodb.net:27017/markdownDB?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"
+const uri = "mongodb://localhost/markdownDB"
 
 mongoose.connect(uri);
 const markdownSchema = new mongoose.Schema({
   title: String,
   body: String,
-  created: {type: Date, default: Date.now} 
+  created: {type: Date, default: Date.now}
 })
 const markdownModel = mongoose.model('blog', markdownSchema)
 // markdownModel.create({
@@ -119,21 +122,21 @@ app.post('/addEntry', function(req,res) {
       if (err) {
         console.log('error inserting')
       } else {
-       
+
         console.log('here is what got inserted:')
         console.log('-----------------------------')
          console.log(blog)
          console.log('-----------------------------')
         res.redirect('showPost')
-       
+
 
       }
     }
   )
  });
 
-  
- 
+
+
 })
 
 
@@ -147,6 +150,25 @@ markdownModel.find({}, (err,blogs)=> {
   } else {
     res.render('showPost', {blogs: blogs})
   }
+})
+
+// UPDATE
+app.put('/blogs/:id', (req, res) => {
+  
+})
+
+// DESTROY
+app.delete('/blogs/:id', (req, res)=> {
+  const id = req.params.id;
+  markdownModel.findByIdAndRemove(id, (err, doc) => {
+    if (err) {
+      console.log('cannot delete '+id+' from db')
+      res.redirect('/showPost')
+    } else {
+      console.log('successfully deleted document "' + doc.title +'"')
+      res.redirect('/showPost')
+    }
+  })
 })
 
 // start node-pygmentize

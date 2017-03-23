@@ -15,6 +15,7 @@
     "express": "^4.14.0",
     "highlight.js": "^9.8.0",
     "marked": "^0.3.6",
+    "method-override": "^2.3.7",
     "mongoose": "^4.9.0",
     "pygmentize-bundled": "^2.3.0"
   },
