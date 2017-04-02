@@ -1,0 +1,21 @@
+<head>
+  <link href="/reset.css" rel='stylesheet'  />
+  <link href="/styles.css" rel='stylesheet'  />
+
+</head>
+<body>
+
+
+    <h1 class="heading">Edit Post</h1>
+<form action="/blogs/<%= blog.id %>?_method=PUT" method="POST">
+  <fieldset class="entry">
+
+
+
+    <input class="entryTitle entrySet" placeholder="Grab attention" name="blog[title]" type="text" required value='<%= blog.title %>'>
+
+<textarea class="entryBody entrySet" placeholder="Awesome content" name="blog[body]" type="text"  required><%= blog.unmarked %></textarea>
+<input   type="submit" value="Update!" />
+</fieldset>
+</form>
+</body>

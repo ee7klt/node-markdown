@@ -25,6 +25,7 @@ mongoose.connect(uri);
 const markdownSchema = new mongoose.Schema({
   title: String,
   body: String,
+  unmarked: String,
   created: {type: Date, default: Date.now}
 })
 const markdownModel = mongoose.model('blog', markdownSchema)
@@ -46,19 +47,19 @@ const markdownModel = mongoose.model('blog', markdownSchema)
 // marked options for hljs
 // see https://github.com/chjj/marked/issues/393 for langPrefix hljs
 marked.setOptions({
-  highlight: function (code) {
-    return require('highlight.js').highlightAuto(code).value;
-  },
-  langPrefix: 'hljs '
+highlight: function (code) {
+return require('highlight.js').highlightAuto(code).value;
+},
+langPrefix: 'hljs '
 });
 
 
 // @chikathreesix solution
 const renderer = new marked.Renderer();
 renderer.code = function(code, language){
-  return '<pre><code class="hljs ' + language + '">' +
-    hljs.highlight(language, code).value +
-    '</code></pre>';
+return '<pre><code class="hljs ' + language + '">' +
+hljs.highlight(language, code).value +
+'</code></pre>';
 };
 */
 
@@ -85,7 +86,7 @@ var markdownString = 'hithere ```js\n console.log("hello"); \n```';
 
 //var msg2 = marked(markdownString)
 var msg2;
- marked(markdownString, function (err, content) {
+marked(markdownString, function (err, content) {
   if (err) throw err;
   //console.log(content);
   msg2 = content
@@ -98,63 +99,102 @@ var msg2;
 
 // Home page
 app.get('/', function(req,res) {
-    res.render("home",{msg: msg, msg2: msg2});
+  res.render("home",{msg: msg, msg2: msg2});
 })
 
 
-// Create new blog post
-app.get('/newBlogPost', function(req,res) {
-  res.render('newBlogPost')
+// NEW
+app.get('/blogs/new', function(req,res) {
+  res.render('new')
 })
 
 
-// content is the text from input box (the blog post)
-let content = {};
 
-// handle the post request for new blog post
+
+// CREATE
 app.post('/addEntry', function(req,res) {
   //req.body.blog.body = req.sanitize(req.body.blog.body)
-    marked(req.body.blog.body, function (err, content) {
-   if (err) throw err;
-   req.body.blog.body = content;
-   markdownModel.create(
-    req.body.blog, (err, blog) => {
-      if (err) {
-        console.log('error inserting')
-      } else {
+  marked(req.body.blog.body, function (err, content) {
+    if (err) throw err;
+    req.body.blog.unmarked = req.body.blog.body
+    req.body.blog.body = content;
+    markdownModel.create(
+      req.body.blog, (err, blog) => {
+        if (err) {
+          console.log('error inserting')
+        } else {
 
-        console.log('here is what got inserted:')
-        console.log('-----------------------------')
-         console.log(blog)
-         console.log('-----------------------------')
-        res.redirect('showPost')
+          console.log('here is what got inserted:')
+          console.log('-----------------------------')
+          console.log(blog)
+          console.log('-----------------------------')
+          res.redirect('showPost')
 
 
+        }
       }
-    }
-  )
- });
+    )
+  });
 
 
 
 })
 
 
-// show the new blog post
-// rendered wihin marked callback
+// SHOW
 app.get('/showPost', function(req, res) {
 
-markdownModel.find({}, (err,blogs)=> {
-  if (err) {
-
-  } else {
-    res.render('showPost', {blogs: blogs})
-  }
+  markdownModel.find({}, (err, blogs)=> {
+    if (err) {
+      console.log('cannot find blogs')
+    } else {
+      res.render('showPost', {blogs: blogs})
+    }
+  })
+  // start node-pygmentize
+  //   marked(entryBody, function (err, content) {
+  //    if (err) throw err;
+  //    const markedEntryBody = content;
+  //    console.log(markedEntryBody);
+  //    res.render('showPost', {markedEntryBody: markedEntryBody, entryTitle: entryTitle, entryDate: entryDate})
+  //  });
+  // end node-pygmentize
+  // start @chikathreesix
+  // const markedEntryBody = marked(entryBody, {renderer: renderer});
+  // res.render('showPost', {markedEntryBody: markedEntryBody, entryTitle: entryTitle, entryDate: entryDate})
+  // end @chikathreesix
 })
+
+
+// EDIT
+app.get('/blogs/:id/edit', (req,res) => {
+  const id = req.params.id;
+  markdownModel.findById(id, (err, blog) => {
+    if (err) {
+      res.redirect('shotPost')
+    } else {
+      console.log(blog)
+      res.render('edit', {blog: blog})
+    }
+  })
+})
+
 
 // UPDATE
 app.put('/blogs/:id', (req, res) => {
-  
+  markdownModel.findByIdAndUpdate(
+    req.params.id,
+    req.body.blog,
+    (err, blog) => {
+      if (err) {
+        console.log('error updating blog')
+        res.redirect('/showPost')
+      } else {
+        res.redirect('/showPost');
+      }
+    }
+  )
+
 })
 
 // DESTROY
@@ -171,23 +211,6 @@ app.delete('/blogs/:id', (req, res)=> {
   })
 })
 
-// start node-pygmentize
-
-//   marked(entryBody, function (err, content) {
-//    if (err) throw err;
-//    const markedEntryBody = content;
-//    console.log(markedEntryBody);
-//    res.render('showPost', {markedEntryBody: markedEntryBody, entryTitle: entryTitle, entryDate: entryDate})
-//  });
- // end node-pygmentize
-
-
-// start @chikathreesix
- // const markedEntryBody = marked(entryBody, {renderer: renderer});
-// res.render('showPost', {markedEntryBody: markedEntryBody, entryTitle: entryTitle, entryDate: entryDate})
-// end @chikathreesix
-})
-
 app.listen(port, function() {
-    console.log('server started!');
+  console.log('server started!');
 })

@@ -13,7 +13,7 @@
         <h1><%= x.title %></h1>
       </div>
       <div class="modify">
-        <form class='edit' style="display: inline;" action="/blogs/<%= x.id %>?_method=PUT" method="POST">
+        <form class='edit' style="display: inline;" action="/blogs/<%= x.id %>/edit" method="GET">
       <input type="submit" value="Edit">
       </form>
         <form class='delete' style="display: inline;" action="/blogs/<%= x.id %>?_method=DELETE" method="POST">
