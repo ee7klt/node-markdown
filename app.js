@@ -26,7 +26,8 @@ const markdownSchema = new mongoose.Schema({
   title: String,
   body: String,
   unmarked: String,
-  created: {type: Date, default: Date.now}
+  created: {type: Date, default: Date.now},
+  lastUpdated: {type: Date, default: Date.now}
 })
 const markdownModel = mongoose.model('blog', markdownSchema)
 // markdownModel.create({
@@ -121,16 +122,17 @@ app.post('/addEntry', function(req,res) {
     markdownModel.create(
       req.body.blog, (err, blog) => {
         if (err) {
+          console.log('-----------------------')
           console.log('error inserting')
+          console.log(err)
+          console.log(blog)
+          console.log('-----------------------')
         } else {
-
           console.log('here is what got inserted:')
           console.log('-----------------------------')
           console.log(blog)
           console.log('-----------------------------')
           res.redirect('showPost')
-
-
         }
       }
     )
@@ -182,18 +184,26 @@ app.get('/blogs/:id/edit', (req,res) => {
 
 // UPDATE
 app.put('/blogs/:id', (req, res) => {
-  markdownModel.findByIdAndUpdate(
-    req.params.id,
-    req.body.blog,
-    (err, blog) => {
-      if (err) {
-        console.log('error updating blog')
-        res.redirect('/showPost')
-      } else {
-        res.redirect('/showPost');
+  marked(req.body.blog.body, function (err, content) {
+    if (err) throw err;
+    req.body.blog.unmarked = req.body.blog.body
+    req.body.blog.body = content;
+    req.body.blog.lastUpdated = Date.now();
+    markdownModel.findByIdAndUpdate(
+      req.params.id,
+      req.body.blog,
+      (err, blog) => {
+        if (err) {
+          console.log('error updating blog')
+          res.redirect('/showPost')
+        } else {
+          console.log(blog)
+          res.redirect('/showPost');
+        }
       }
-    }
-  )
+    )
+  });
+
 
 })
 
