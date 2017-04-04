@@ -10,7 +10,7 @@
     <div class="container">
       <span><%= x.created.toDateString() %></span>
       <div class="postTitle">
-        <h1><%= x.title %></h1>
+        <h1><a href="/blogs/<%= x._id%>"><%= x.title %></a></h1>
       </div>
       <div class="modify">
         <form class='edit' style="display: inline;" action="/blogs/<%= x.id %>/edit" method="GET">
@@ -30,5 +30,5 @@
       <hr >
     </div>
     <% }) %>
-    <script src="script.js" type="text/javascript"></script>
+  
   </body>

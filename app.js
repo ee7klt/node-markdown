@@ -18,6 +18,7 @@ app.use(methodOverride("_method"))
 
 
 const mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
 //const uri = "mongodb://mongoadmin:quark8751@cluster0-shard-00-00-abnxv.mongodb.net:27017,cluster0-shard-00-01-abnxv.mongodb.net:27017,cluster0-shard-00-02-abnxv.mongodb.net:27017/markdownDB?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"
 const uri = "mongodb://localhost/markdownDB"
 
@@ -143,30 +144,32 @@ app.post('/addEntry', function(req,res) {
 })
 
 
-// SHOW
-app.get('/showPost', function(req, res) {
-
-  markdownModel.find({}, (err, blogs)=> {
-    if (err) {
-      console.log('cannot find blogs')
-    } else {
-      res.render('showPost', {blogs: blogs})
-    }
+// INDEX
+app.get('/blogs', function(req, res) {
+  const promise = markdownModel.find({}).exec();
+  promise.then((blogs) => {
+     //console.log('then promise')
+     res.render('index', {blogs: blogs})
   })
-  // start node-pygmentize
-  //   marked(entryBody, function (err, content) {
-  //    if (err) throw err;
-  //    const markedEntryBody = content;
-  //    console.log(markedEntryBody);
-  //    res.render('showPost', {markedEntryBody: markedEntryBody, entryTitle: entryTitle, entryDate: entryDate})
-  //  });
-  // end node-pygmentize
-  // start @chikathreesix
-  // const markedEntryBody = marked(entryBody, {renderer: renderer});
-  // res.render('showPost', {markedEntryBody: markedEntryBody, entryTitle: entryTitle, entryDate: entryDate})
-  // end @chikathreesix
+  .catch( (err) => {
+    console.log('[INDEX] error fetching document: ', err.message)
+  })
 })
 
+
+// SHOW
+app.get('/blogs/:id', function(req, res) {
+  const id = req.params.id;
+  //res.render('show',{blog: id})
+  const promise = markdownModel.findById(id).exec();
+  promise.then((blog) => {
+     //console.log('then promise')
+     res.render('show', {blog: blog})
+  })
+  .catch( (err) => {
+    console.log('[SHOW] error fetching document: ', err.message)
+  })
+})
 
 // EDIT
 app.get('/blogs/:id/edit', (req,res) => {
