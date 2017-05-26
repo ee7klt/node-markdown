@@ -6,14 +6,7 @@ GET
 .findById()
 -->
 
-<head>
-  <link rel="stylesheet" href="/pastie.css">
-  <link rel="stylesheet" href="/post-styles.css">
-
-  <script src="/marked.js"></script>
-</head>
-
-<body>
+<% include partials/header %>
   <div class="container">
     <span><%= blog.created.toDateString() %></span>
     <div class="postTitle">

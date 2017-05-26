@@ -1,11 +1,5 @@
-<head>
-  <link rel="stylesheet" href="/pastie.css">
-  <link rel="stylesheet" href="/post-styles.css">
-
-  <script src="/marked.js"></script>
-</head>
-
-<body>
+<% include partials/header %>
+  <a class="button" href="/blogs/new">NEW</a>
   <% blogs.forEach((x) => { %>
     <div class="container">
       <span><%= x.created.toDateString() %></span>
@@ -30,5 +24,5 @@
       <hr >
     </div>
     <% }) %>
-  
+
   </body>

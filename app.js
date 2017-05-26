@@ -101,7 +101,7 @@ marked(markdownString, function (err, content) {
 
 // Home page
 app.get('/', function(req,res) {
-  res.render("home",{msg: msg, msg2: msg2});
+  res.redirect('blogs')
 })
 
 
@@ -133,7 +133,7 @@ app.post('/addEntry', function(req,res) {
           console.log('-----------------------------')
           console.log(blog)
           console.log('-----------------------------')
-          res.redirect('showPost')
+          res.redirect('/')
         }
       }
     )
